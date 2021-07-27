@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  aiflow-ui:
+    image: orientis/aiflow-ui:0.2.0
+    container_name: aiflow-ui
+    depends_on: 
+      - aiflow-api
+    restart: always
+    ports:
+      - "7771:80"
+
+  aiflow-api:
+    image: orientis/aiflow-api:0.2.0
+    container_name: aiflow-api
+    depends_on:
+      - aiflow-db
+      - aiflow-runners-int
+    restart: always
+    ports:
+      - "7772:80"
+    volumes:
+      - ./_docker_volumes/appdata:/app/appdata
+      - ./_docker_volumes/internal-runners:/app/internal-runners
+
+  aiflow-runners-int:
+    image: orientis/aiflow-runners-int:0.2.0
+    container_name: aiflow-runners-int
+    restart: always
+    tty: true
+    volumes: 
+      - ./_docker_volumes/internal-runners:/app/internal-runners
+
+  aiflow-db:
+    image: postgres:13
+    container_name: aiflow-db
+    restart: always
+    ports:
+      - "7773:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./_docker_volumes/aiflow-db/postgres:/var/lib/postgresql/data
