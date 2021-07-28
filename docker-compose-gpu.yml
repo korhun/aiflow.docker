@@ -11,6 +11,9 @@ services:
       - "7771:80"
 
   aiflow-api:
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
     image: orientis/aiflow-api:latest
     container_name: aiflow-api
     depends_on:
